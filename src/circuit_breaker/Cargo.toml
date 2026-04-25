@@ -1,0 +1,17 @@
+[package]
+name = "anchorpoint-circuit-breaker"
+version = "0.1.0"
+edition = "2021"
+description = "Protocol-wide Circuit Breaker for AnchorPoint"
+
+[dependencies]
+soroban-sdk = "22.0.0"
+
+[lib]
+name = "anchorpoint_circuit_breaker"
+path = "lib.rs"
+crate-type = ["cdylib"]
+doctest = false
+
+[dev-dependencies]
+soroban-sdk = { version = "22.0.0", features = ["testutils"] }

@@ -7,6 +7,7 @@ import {
   normalizeAssetCode,
   SUPPORTED_ASSETS,
 } from '../../services/kyc.service';
+import { isOperationAllowed } from '../../services/circuit-breaker.service';
 
 const router = Router();
 
@@ -80,6 +81,15 @@ const getBaseInteractiveUrl = (): string => process.env.INTERACTIVE_URL || 'http
  *         description: Invalid request parameters
  */
 router.post('/transactions/deposit/interactive', (req: Request, res: Response) => {
+  // Check circuit breaker - deposits are blocked during full pause or withdrawal_only pause
+  if (!isOperationAllowed('deposit')) {
+    return res.status(503).json({
+      error: 'Service temporarily unavailable',
+      code: 'CIRCUIT_BREAKER_ACTIVE',
+      message: 'Deposits are currently paused due to protocol protection measures',
+    });
+  }
+
   const { asset_code, account, amount, lang = 'en' }: InteractiveRequest = req.body;
 
   if (!asset_code) {
@@ -161,6 +171,15 @@ router.post('/transactions/deposit/interactive', (req: Request, res: Response) =
  *         description: Invalid request parameters
  */
 router.post('/transactions/withdraw/interactive', (req: Request, res: Response) => {
+  // Check circuit breaker - withdrawals are blocked during full pause or withdrawal_only pause
+  if (!isOperationAllowed('withdraw')) {
+    return res.status(503).json({
+      error: 'Service temporarily unavailable',
+      code: 'CIRCUIT_BREAKER_ACTIVE',
+      message: 'Withdrawals are currently paused due to protocol protection measures',
+    });
+  }
+
   const { asset_code, account, amount, lang = 'en' }: InteractiveRequest = req.body;
 
   if (!asset_code) {

@@ -12,7 +12,8 @@ members = [
     "src/flash_loan",
     "src/kyc",
     "src/staking",
-    "src/escrow_timelock"
+    "src/escrow_timelock",
+    "src/circuit_breaker"
 ]
 resolver = "2"
 
